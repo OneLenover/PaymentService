@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace PaymentService.DataAccess.Postgres.Entities
 {
+    // Модель платежа заказа
     public class Payment
     {
         public long Id { get; set; }

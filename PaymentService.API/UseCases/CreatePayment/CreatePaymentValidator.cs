@@ -3,6 +3,7 @@ using FluentValidation.Validators;
 
 namespace PaymentService.API.UseCases.CreatePayment
 {
+    // Проверка корректности данных в команде
     public class CreatePaymentValidator : AbstractValidator<CreatePaymentCommand>
     {
         public CreatePaymentValidator() 
