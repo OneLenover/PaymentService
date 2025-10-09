@@ -41,20 +41,16 @@ internal class Program
 
         var app = builder.Build();
 
-        // Миграции базы данных при старте
-        if (app.Environment.IsDevelopment())
+        using var scope = app.Services.CreateScope();
+        try
         {
-            using var scope = app.Services.CreateScope();
-            try
-            {
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                db.Database.Migrate();
-            }
-            catch (Exception ex)
-            {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "Ошибка применения миграций во время старта PaymentService");
-            }
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "Ошибка применения миграций во время старта PaymentService");
         }
 
         // Swagger

@@ -7,7 +7,7 @@ using System.Text.Json;
 namespace PaymentService.API.UseCases.CreatePayment
 {
     // Обработчик команды создания платежа
-    public class CreatePaymentHandler : IRequestHandler<CreatePaymentCommand, Unit>
+    public class CreatePaymentHandler : IRequestHandler<CreatePaymentCommand, long>
     {
         private readonly IAppDbContext _context;
         private readonly KafkaProducer _kafkaProducer;
@@ -18,7 +18,7 @@ namespace PaymentService.API.UseCases.CreatePayment
             _kafkaProducer = kafkaProducer;
         }
 
-        public async Task<Unit> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
+        public async Task<long> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
             var payment = new Payment
             {
@@ -43,7 +43,7 @@ namespace PaymentService.API.UseCases.CreatePayment
 
             await _kafkaProducer.ProduceAsync("notifications", message);
 
-            return Unit.Value;
+            return payment.Id;
         }
     }
 }

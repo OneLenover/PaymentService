@@ -3,6 +3,6 @@
 namespace PaymentService.API.UseCases.CreatePayment
 {
     // Команды создания платежа
-    public record CreatePaymentCommand(long OrderId, decimal Price) : IRequest<Unit>;
+    public record CreatePaymentCommand(long OrderId, decimal Price) : IRequest<long>;
 
 }

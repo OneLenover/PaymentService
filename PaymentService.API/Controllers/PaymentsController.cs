@@ -35,7 +35,7 @@ namespace PaymentService.API.Controllers
 
             _logger.LogInformation("Платёж успешно создан с ID={PaymentId}", paymentId);
 
-            return CreatedAtRoute("GetPaymentById", new { payment_id = paymentId }, new { id = paymentId });
+            return Ok(new { id = paymentId });
         }
 
         // Получить платеж заказа по paymentId
