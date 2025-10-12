@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OrderService.API.Services;
+using PaymentService.API.Mappings;
 using PaymentService.DataAccess.Postgres;
 using System.Reflection;
 
@@ -31,7 +32,7 @@ internal class Program
         builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         // AutoMapper
-        builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        builder.Services.AddAutoMapper(typeof(PaymentMappingProfile).Assembly);
 
         // Kafka
         builder.Services.AddSingleton<KafkaProducer>();
