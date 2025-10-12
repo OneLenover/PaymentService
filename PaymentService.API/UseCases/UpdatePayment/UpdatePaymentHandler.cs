@@ -6,6 +6,7 @@ using static PaymentService.API.UseCases.UpdatePayment.UpdatePaymentCommand;
 using System.Text.Json;
 using AutoMapper;
 using PaymentService.API.DTOs;
+using PaymentService.API.Mappings;
 
 namespace PaymentService.API.UseCases.UpdatePayment
 {
@@ -17,13 +18,12 @@ namespace PaymentService.API.UseCases.UpdatePayment
     {
         private readonly IAppDbContext _db;
         private readonly KafkaProducer _kafkaProducer;
-        private readonly IMapper _mapper;
+        private readonly PaymentMapper _mapper = new();
 
-        public UpdatePaymentHandler(IAppDbContext db, KafkaProducer kafkaProducer, IMapper mapper)
+        public UpdatePaymentHandler(IAppDbContext db, KafkaProducer kafkaProducer)
         {
             _db = db;
             _kafkaProducer = kafkaProducer;
-            _mapper = mapper;
         }
 
         public async Task<bool> Handle(UpdatePaymentCommand request, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ namespace PaymentService.API.UseCases.UpdatePayment
             payment.Status = request.Status;
             await _db.SaveChangesAsync(cancellationToken);
 
-            var paymentEvent = _mapper.Map<PaymentUpdatedEvent>(payment);
+            var paymentEvent = _mapper.ToPaymentUpdatedEvent(payment);
 
             var message = JsonSerializer.Serialize(paymentEvent);
 

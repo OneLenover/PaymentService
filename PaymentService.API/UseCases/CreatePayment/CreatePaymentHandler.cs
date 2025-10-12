@@ -2,6 +2,7 @@
 using MediatR;
 using OrderService.API.Services;
 using PaymentService.API.DTOs;
+using PaymentService.API.Mappings;
 using PaymentService.DataAccess.Postgres;
 using PaymentService.DataAccess.Postgres.Entities;
 using System.Text.Json;
@@ -16,23 +17,22 @@ namespace PaymentService.API.UseCases.CreatePayment
     {
         private readonly IAppDbContext _context;
         private readonly KafkaProducer _kafkaProducer;
-        private readonly IMapper _mapper;
+        private readonly PaymentMapper _mapper = new();
 
-        public CreatePaymentHandler(IAppDbContext context, KafkaProducer kafkaProducer, IMapper mapper)
+        public CreatePaymentHandler(IAppDbContext context, KafkaProducer kafkaProducer)
         {
             _context = context;
             _kafkaProducer = kafkaProducer;
-            _mapper = mapper;
         }
 
         public async Task<long> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
-            var payment = _mapper.Map<Payment>(request);
+            var payment = _mapper.ToPayment(request);
 
             await _context.Payments.AddAsync(payment, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var paymentEvent = _mapper.Map<PaymentCreatedEvent>(payment);
+            var paymentEvent = _mapper.ToPaymentCreatedEvent(payment);
 
             var message = JsonSerializer.Serialize(paymentEvent);
 
